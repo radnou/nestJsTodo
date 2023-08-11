@@ -44,11 +44,33 @@ export class TodosService {
     if (todoWithUpdate.hasOwnProperty('done')) {
       todoToUpdate.done = todoWithUpdate.done;
     }
-    const refreshedTodos = this.todos.map(t => t.id !== +id ? t : todoToUpdate);
+    const refreshedTodos = this.todos.map((t) =>
+      t.id !== +id ? t : todoToUpdate,
+    );
     this.todos = [...refreshedTodos];
     return {
-      updatedTodos : 1,
-      todo: todoToUpdate
+      updatedTodos: 1,
+      todo: todoToUpdate,
     };
+  }
+  delete(id: string) {
+    const nbTodosBeforeRemove = this.todos.length;
+    const todoToDelete: Todo = this.getOne(id);
+    if (!todoToDelete) {
+      return new NotFoundException('Todo id not found');
+    }
+    this.todos = [...this.todos.filter((t) => t.id !== +id)];
+
+    if (nbTodosBeforeRemove > this.todos.length) {
+      return {
+        deletedTodos: 1,
+        nbTodos: this.todos.length,
+      };
+    } else {
+      return {
+        deletedTodos: 0,
+        nbTodos: this.todos.length,
+      };
+    }
   }
 }
